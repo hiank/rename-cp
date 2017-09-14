@@ -1,6 +1,7 @@
 package main
 
 import (
+	"os"
 	"fmt"
 	"flag"
 	"github.com/hiank/rename-cp"
@@ -22,5 +23,7 @@ func main() {
 		fmt.Println("should define dstDir with -d") 
 		return
 	}
+	os.RemoveAll(*dstDir)
+	os.Mkdir(*dstDir, 0755)
 	rc.DuplicateDir(*srcDir, *dstDir)
 }

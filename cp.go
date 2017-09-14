@@ -26,11 +26,11 @@ func DuplicateDir(lDir string, rDir string) {
 	for {
 
 		name := d.NextFile()
-		if name == nil {
+		if name == "" {
 			break
 		}
 
-		renameFile(*name)
+		renameFile(name)
 	}
 }
 
