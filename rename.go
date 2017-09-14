@@ -35,7 +35,7 @@ func RandName(name string) string {
 
 	var end string
 	idx := strings.LastIndexByte(name, '.')
-	if idx > 1 {
+	if idx > 0 {
 		end = name[idx:]
 		name = name[:idx]
 	}
