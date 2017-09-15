@@ -10,17 +10,20 @@ import (
 
 
 
-// RenameFile used to rename the file to rand name
-func RenameFile(name string) {
+// RenameFile used to rename the file to rand name, return new name
+func RenameFile(name string) string {
 	
 	idx := strings.LastIndexByte(name, os.PathSeparator) + 1
 	onlyName := name[idx:]
 
-	err := os.Rename(name, name[:idx] + RandName(onlyName))
+	rn := RandName(onlyName)
+	err := os.Rename(name, name[:idx] + rn)
 	if err != nil {
 
 		fmt.Println("rename file " + name + " error :" + err.Error())
+		return name
 	}
+	return rn
 }
 
 // RandName used to rand new name

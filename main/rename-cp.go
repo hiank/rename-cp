@@ -40,13 +40,9 @@ import (
 	"flag"
 	"os"
 	"io/ioutil"
-	"strings"
 	"path"
 	"io"
 	"path/filepath"
-	"crypto/md5"
-	"encoding/hex"
-	"crypto/rand"
 )
 
 var inputDir = flag.String("i", "", "input Dir")
@@ -85,10 +81,12 @@ func main() {
 		myKey = append(myKey, padtext...)
 	}
 
-	mapList = make(map[string]string)
+	// mapList = make(map[string]string)
 
-	relPath := ""
-	processDir(inputDir, outputDir, &relPath)
+	// relPath := ""
+	// processDir(inputDir, outputDir, relPath)
+	mapList = rc.DuplicateDirRenameFile(*inputDir, *outputDir)
+
 	generateKeyFile(outputDir)
 	//testAes()
 
@@ -96,88 +94,89 @@ func main() {
 	fmt.Println(ds, "encode end ====== ")
 }
 
-func processFile(filePath *string, filePathOut *string)  {
-	//file, error := os.Open( *filePath)
-	//if error != nil {
-	//	fmt.Println("error read file !", error)
-	//	return
-	//}
-	//
-	//defer file.Close()
-	EncodeFile(*filePath, *filePathOut)
-}
+// func processFile(filePath *string, filePathOut *string)  {
+// 	//file, error := os.Open( *filePath)
+// 	//if error != nil {
+// 	//	fmt.Println("error read file !", error)
+// 	//	return
+// 	//}
+// 	//
+// 	//defer file.Close()
+// 	EncodeFile(*filePath, *filePathOut)
+// }
 
 
-func GetMd5String(s string) string {
-	h := md5.New()
-	h.Write([]byte(s))
-	return hex.EncodeToString(h.Sum(nil))
-}
+// func GetMd5String(s string) string {
+// 	h := md5.New()
+// 	h.Write([]byte(s))
+// 	return hex.EncodeToString(h.Sum(nil))
+// }
 
-func UniqueId() string {
-	b := make([]byte, 48)
-	if _, err := io.ReadFull(rand.Reader, b); err != nil {
-		return ""
-	}
-	return GetMd5String(base64.URLEncoding.EncodeToString(b))
-}
+// func UniqueId() string {
+// 	b := make([]byte, 48)
+// 	if _, err := io.ReadFull(rand.Reader, b); err != nil {
+// 		return ""
+// 	}
+// 	return GetMd5String(base64.URLEncoding.EncodeToString(b))
+// }
 
 
-func processDir(subDir *string, outSubDir *string, relPath *string){
-	dir, err := ioutil.ReadDir(*subDir)
-	if err != nil {
-		fmt.Printf("error read dir")
-		return
-	}
+// func processDir(subDir *string, outSubDir *string, relPath string){
+// 	dir, err := ioutil.ReadDir(*subDir)
+// 	if err != nil {
+// 		fmt.Printf("error read dir")
+// 		return
+// 	}
 
-	for _, fi := range dir {
-		//		fmt.Printf(fi.Name() + "\n")
-		if fi.IsDir() { // 忽略目录
-			//continue
-			path := *subDir + "/" + fi.Name()
-			rPath := *relPath + "/" + fi.Name()
-			pathOut := *outSubDir + "/" + fi.Name()
-			processDir(&path, &pathOut, &rPath)
-			continue
-		}
+// 	apart := string(os.PathSeparator)
+// 	for _, fi := range dir {
+// 		//		fmt.Printf(fi.Name() + "\n")
+// 		if fi.IsDir() { // 忽略目录
+// 			//continue
+// 			path := *subDir + apart + fi.Name()
+// 			rPath := relPath + apart + fi.Name()
+// 			pathOut := *outSubDir + apart + fi.Name()
+// 			processDir(&path, &pathOut, &rPath)
+// 			continue
+// 		}
 
-		if 1==1 || strings.HasSuffix(strings.ToLower(fi.Name()), "xlsx") { //匹配文件
-			//files = append(files, dirPth+PthSep+fi.Name())
-			//name := Substr(fi.Name(), 0, len(fi.Name()) - 5)
-			lowName := strings.ToLower(fi.Name())
-			switch {
-				case strings.HasSuffix(lowName, "mp3"): fallthrough
-				case strings.HasSuffix(lowName, "wav"): 
-					filePath := *subDir + "/" + fi.Name()
-					filePathOut := *outSubDir + "/" + fi.Name()
+// 		if 1==1 || strings.HasSuffix(strings.ToLower(fi.Name()), "xlsx") { //匹配文件
+// 			//files = append(files, dirPth+PthSep+fi.Name())
+// 			//name := Substr(fi.Name(), 0, len(fi.Name()) - 5)
+// 			lowName := strings.ToLower(fi.Name())
+// 			switch {
+// 				case strings.HasSuffix(lowName, "mp3"): fallthrough
+// 				case strings.HasSuffix(lowName, "wav"): 
+// 					filePath := *subDir + apart + fi.Name()
+// 					filePathOut := *outSubDir + apart + fi.Name()
 
-					//fmt.Printf(filePath + "-->" + filePathOut + "\n" )
-					CopyFile(filePath, filePathOut)
-				case Substr(fi.Name(), 0, 1) != ".":
-					filePath := *subDir + "/" + fi.Name()
-					var filePathOut string
+// 					//fmt.Printf(filePath + "-->" + filePathOut + "\n" )
+// 					CopyFile(filePath, filePathOut)
+// 				case Substr(fi.Name(), 0, 1) != ".":
+// 					filePath := *subDir + apart + fi.Name()
+// 					var filePathOut string
 
-					if *rename == 1 {
-						// newName := UniqueId()
-						newName := rc.RandName(fi.Name())
-						filePathOut = *outputDir + "/data/" + newName
+// 					if *rename == 1 {
+// 						// newName := UniqueId()
+// 						newName := rc.RandName(fi.Name())
+// 						filePathOut = *outputDir + apart + "data" + apart + newName
 
-						strPath := *relPath + "/" + fi.Name()
+// 						strPath := *relPath + apart + fi.Name()
 
-						//if strings.HasSuffix(strings.ToLower(strPath), "jsc"){
-						//	strPath = strPath[0: len(strPath) -1]
-						//}
-						mapList[strPath] = newName
-					}else{
-						filePathOut = *outSubDir + "/" + fi.Name()
-					}
-					//fmt.Printf(filePath + "-->" + filePathOut + "\n" )
-					processFile(&filePath, &filePathOut)		
-			}
+// 						//if strings.HasSuffix(strings.ToLower(strPath), "jsc"){
+// 						//	strPath = strPath[0: len(strPath) -1]
+// 						//}
+// 						mapList[strPath] = newName
+// 					}else{
+// 						filePathOut = *outSubDir + apart + fi.Name()
+// 					}
+// 					//fmt.Printf(filePath + "-->" + filePathOut + "\n" )
+// 					processFile(&filePath, &filePathOut)		
+// 			}
 
-		}
-	}
-}
+// 		}
+// 	}
+// }
 
 func testAes() {
 	// AES-128。key长度：16, 24, 32 bytes 对应 AES-128, AES-192, AES-256
@@ -311,7 +310,7 @@ func CopyFile(src, des string) (w int64, err error) {
 }
 
 func generateKeyFile(des *string)  {
-	keyFile := *des + "/" + "sh.mk"
+	keyFile := *des + string(os.PathSeparator) + "sh.mk"
 
 	os.MkdirAll(path.Dir(keyFile), 0777)
 	desFile, err := os.Create(keyFile)
@@ -341,11 +340,12 @@ func generateKeyFile(des *string)  {
 		panic(err)
 	}
 
-	buf := make([]byte, 4)
-	buf[0] = byte(6)
-	buf[1] = byte(7)
-	buf[2] = byte(70)
-	buf[3] = byte(84)
+	// buf := make([]byte, 4)
+	// buf[0] = byte(6)
+	// buf[1] = byte(7)
+	// buf[2] = byte(70)
+	// buf[3] = byte(84)
+	buf := []byte{byte(6), byte(7), byte(70), byte(84)}
 
 	desFile.Write(buf)
 	desFile.Write(result)

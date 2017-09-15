@@ -7,8 +7,8 @@ import (
 	"github.com/hiank/core"
 )
 
-// DuplicateDir used to copy file to dst site
-func DuplicateDir(lDir string, rDir string) {
+// DuplicateDirRenameFile used to copy file to dst site, and rename file, and return filename map
+func DuplicateDirRenameFile(lDir string, rDir string) (fileNameMap map[string]string) {
 
 	lDir, rDir = core.AddApart(lDir), core.AddApart(rDir)
 	core.DuplicateDir(lDir, rDir)
@@ -21,6 +21,8 @@ func DuplicateDir(lDir string, rDir string) {
 	}
 
 	rand.Seed(time.Now().UnixNano())
+	lLen, rLen := len(lDir), len(rDir)
+	fileNameMap = make(map[string]string)
 	for {
 
 		name := d.NextFile()
@@ -28,7 +30,8 @@ func DuplicateDir(lDir string, rDir string) {
 			break
 		}
 
-		RenameFile(name)
+		newName := RenameFile(name)
+		fileNameMap[name[lLen:]] = newName[rLen:]
 	}
+	return
 }
-
