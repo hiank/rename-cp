@@ -21,7 +21,7 @@ func DuplicateDirRenameFile(lDir string, rDir string) (fileNameMap map[string]st
 	}
 
 	rand.Seed(time.Now().UnixNano())
-	lLen, rLen := len(lDir), len(rDir)
+	dirLen := len(rDir)
 	fileNameMap = make(map[string]string)
 	for {
 
@@ -31,7 +31,7 @@ func DuplicateDirRenameFile(lDir string, rDir string) (fileNameMap map[string]st
 		}
 
 		newName := RenameFile(name)
-		fileNameMap[name[lLen:]] = newName[rLen:]
+		fileNameMap[name[dirLen:]] = newName[dirLen:]
 	}
 	return
 }

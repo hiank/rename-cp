@@ -16,8 +16,8 @@ func RenameFile(name string) string {
 	idx := strings.LastIndexByte(name, os.PathSeparator) + 1
 	onlyName := name[idx:]
 
-	rn := RandName(onlyName)
-	err := os.Rename(name, name[:idx] + rn)
+	rn := name[:idx] + RandName(onlyName)
+	err := os.Rename(name, rn)
 	if err != nil {
 
 		fmt.Println("rename file " + name + " error :" + err.Error())
