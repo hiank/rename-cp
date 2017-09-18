@@ -10,7 +10,8 @@ import (
 // DuplicateDirRenameFile used to copy file to dst site, and rename file, and return filename map
 func DuplicateDirRenameFile(lDir string, rDir string) (fileNameMap map[string]string) {
 
-	lDir, rDir = core.AddApart(lDir), core.AddApart(rDir)
+	lDir, rDir = core.AddApart(lDir), core.AddApart(rDir) + "data"
+	rDir = core.AddApart(rDir)
 	core.DuplicateDir(lDir, rDir)
 
 	d, err := core.NewDirInfo(rDir, nil)
@@ -31,7 +32,7 @@ func DuplicateDirRenameFile(lDir string, rDir string) (fileNameMap map[string]st
 		}
 
 		newName := RenameFile(name)
-		fileNameMap[name[dirLen:]] = newName[dirLen:]
+		fileNameMap["/" + name[dirLen:]] = newName[dirLen:]
 	}
 	return
 }
