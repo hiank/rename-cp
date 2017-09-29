@@ -14,7 +14,7 @@ func DuplicateDirRenameFile(lDir string, rDir string) (fileNameMap map[string]st
 	rDir = core.AddApart(rDir)
 	core.DuplicateDir(lDir, rDir)
 
-	d, err := core.NewDirInfo(rDir, nil)
+	d, err := core.NewDirInfo(rDir, NameFilter)
 	if err != nil {
 
 		fmt.Println("read dir error :" + err.Error())

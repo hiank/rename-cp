@@ -48,4 +48,3 @@ func RandName(name string) string {
 
 	return pre + "_" + name + "_" + string(suf) + end
 }
-	
